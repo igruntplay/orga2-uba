@@ -21,8 +21,7 @@ section .text
         ;prologo
         push rbp
         mov rbp, rsp
-        sub rsp, 16
-        
+                
         mov eax , dword [entero1] 
         mov ebx , dword [entero2]
 
