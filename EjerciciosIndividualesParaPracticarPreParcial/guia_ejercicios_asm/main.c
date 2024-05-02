@@ -9,7 +9,7 @@
 
 int main (void){
 	/* Acá pueden realizar sus propias pruebas */
-	int number = 42;
+	int number = 16;
 	fprintf(stdout, "El número es: %d\n", number);
 
 	uint32_t* vector;

@@ -36,7 +36,7 @@ acumuladoPorCliente_asm:
 	mov r12, rdi		; r12 <- cantidadDePagos
 	mov r13, rsi		; r13 <- arr_pagos
 
-	mov rdi, 10
+	mov rdi, 101
 	mov rsi, SIZE_UIN32_T
 	call calloc
 
