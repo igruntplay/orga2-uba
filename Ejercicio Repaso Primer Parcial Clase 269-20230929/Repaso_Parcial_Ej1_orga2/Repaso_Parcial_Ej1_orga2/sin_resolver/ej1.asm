@@ -34,6 +34,10 @@ section .text
 acumuladoPorCliente_asm:
     push rbp
     mov rbp, rsp
+	push r15
+	push r14
+	push r13
+	sub rsp, 8 ; alineo la pila
 
     mov r15, 10
     mov r14, TAMANIO_ENTERO_32
@@ -46,7 +50,6 @@ acumuladoPorCliente_asm:
     mov r13, rax ; r13 = res
 
     xor rcx, rcx ; rcx se usará como contador
-    mov rsi, rsi ; rsi = arr_pagos
 
     .ciclo:
         cmp rcx, rdi ; si rcx >= cantidadDePagos, termino
@@ -68,6 +71,9 @@ acumuladoPorCliente_asm:
     .fin:
         mov rax, r13 ; Devolver el puntero al arreglo res
         pop rbp
+		pop r15
+		pop r14
+		pop r13
         ret
 
 

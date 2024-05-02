@@ -1,0 +1,71 @@
+
+**Compilando
+nasm -f elf64 -g -F DWARF ej1.asm -o ej1_asm.o
+c99 -Wall -Wextra -pedantic -O0 -g -lm -Wno-unused-variable -Wno-unused-parameter -no-pie -z noexecstack tester.c ej1_c.o ej1_asm.o -o tester
+
+**Corriendo diferencias con la catedra
+./runTester.sh: line 19: 11489 Segmentation fault      ./tester
+  **Discrepancia en el ejercicio 1
+
+
+==11491== Memcheck, a memory error detector
+==11491== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==11491== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==11491== Command: ./tester
+==11491==
+==11491== Conditional jump or move depends on uninitialised value(s)
+==11491==    at 0x401DB0: ??? (ej1.asm:57)
+==11491==    by 0x4014C5: test_ej1a (tester.c:59)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491== Invalid read of size 4
+==11491==    at 0x401DBB: ??? (ej1.asm:61)
+==11491==    by 0x4014C5: test_ej1a (tester.c:59)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==  Address 0x4a4a9e8 is 600 bytes inside an unallocated block of size 4,184,144 in arena "client"
+==11491==
+==11491== Conditional jump or move depends on uninitialised value(s)
+==11491==    at 0x48CA958: __vfprintf_internal (vfprintf-internal.c:1687)
+==11491==    by 0x48B4C69: fprintf (fprintf.c:32)
+==11491==    by 0x401524: test_ej1a (tester.c:61)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491== Use of uninitialised value of size 8
+==11491==    at 0x48AE69B: _itoa_word (_itoa.c:179)
+==11491==    by 0x48CA574: __vfprintf_internal (vfprintf-internal.c:1687)
+==11491==    by 0x48B4C69: fprintf (fprintf.c:32)
+==11491==    by 0x401524: test_ej1a (tester.c:61)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491== Conditional jump or move depends on uninitialised value(s)
+==11491==    at 0x48AE6AD: _itoa_word (_itoa.c:179)
+==11491==    by 0x48CA574: __vfprintf_internal (vfprintf-internal.c:1687)
+==11491==    by 0x48B4C69: fprintf (fprintf.c:32)
+==11491==    by 0x401524: test_ej1a (tester.c:61)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491== Conditional jump or move depends on uninitialised value(s)
+==11491==    at 0x48CB228: __vfprintf_internal (vfprintf-internal.c:1687)
+==11491==    by 0x48B4C69: fprintf (fprintf.c:32)
+==11491==    by 0x401524: test_ej1a (tester.c:61)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491== Conditional jump or move depends on uninitialised value(s)
+==11491==    at 0x48CA6EE: __vfprintf_internal (vfprintf-internal.c:1687)
+==11491==    by 0x48B4C69: fprintf (fprintf.c:32)
+==11491==    by 0x401524: test_ej1a (tester.c:61)
+==11491==    by 0x401205: main (tester.c:21)
+==11491==
+==11491==
+==11491== HEAP SUMMARY:
+==11491==     in use at exit: 0 bytes in 0 blocks
+==11491==   total heap usage: 410 allocs, 410 frees, 899,704 bytes allocated
+==11491==
+==11491== All heap blocks were freed -- no leaks are possible
+==11491==
+==11491== Use --track-origins=yes to see where uninitialised values come from
+==11491== For lists of detected and suppressed errors, rerun with: -s
+==11491== ERROR SUMMARY: 262 errors from 7 contexts (suppressed: 0 from 0)
+  **Error de memoria
+grunt@grunt:/mnt/e/FACULTAD/orga2-uba/Ejercicio Repaso Primer Parcial Clase 269-20230929/Repaso_Parcial_Ej1_orga2/Repaso_Parcial_Ej1_orga2/sin_resolver$
+
