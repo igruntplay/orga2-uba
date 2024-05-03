@@ -70,7 +70,7 @@ acumuladoPorCliente_asm:
         jge .fin
 
         ; Si pago_i.aprobado == 1, entonces res[arr_pagos[i].cliente] += arr_pagos[i].monto
-        cmp byte [rsi + rbx*TAMANIO_PAGO_T + OFFSET_APROBADO], 1
+        cmp byte [r13 + OFFSET_APROBADO], 1   ; Compara el valor en la dirección calculada con 1
         jne .siguiente
 
         movzx rax, byte [rsi + OFFSET_CLIENTE] ; eax = arr_pagos[i].cliente
