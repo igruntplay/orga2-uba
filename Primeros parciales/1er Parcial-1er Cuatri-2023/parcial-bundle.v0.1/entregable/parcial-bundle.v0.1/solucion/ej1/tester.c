@@ -18,7 +18,7 @@ void test_ej1b(char* filename);
 int main() {
 	srand(0);
     remove(filename_ej1);
-	test_ej1a(filename_ej1);
+//	test_ej1a(filename_ej1);
 	test_ej1b(filename_ej1);
 	return 0;
 }
@@ -29,7 +29,7 @@ int main() {
 uint32_t shuffle_int(uint32_t min, uint32_t max){
 	return (uint32_t) (rand() % (max + 1)) + min;
 }
-
+/*
 void test_ej1a(char* filename) {
     
     uint32_t (*func_cuantos)(templo* , size_t );
@@ -57,8 +57,7 @@ void test_ej1a(char* filename) {
         free(arrayTemplos);
     }
 }
-
-
+*/
 void test_ej1b(char* filename){
     
     templo* (*func_templos)(templo* , size_t );

@@ -19,54 +19,59 @@ section .text
 ; Signatura de la función:
 ; uint32_t cuantosTemplosClasicos(templo *temploArr, size_t temploArr_len);
 
+; La misma devuelve la cantidad de templos que son del periodo clasico, es decir cumplen con la condición M = 2n+1 y la otra de n = (M-1)/2
+
 ; Mapeo de parámetros a registros: 
 ; rdi[temploArr], rsi[temploArr_len]
 
 ; Idea de la implementación:
 ; Lo que tengo que hacer es agarrar el templo, calcular la cantidad de columnas largo y ancho y comparar
-; Como no voy a llamar ninguna función en el mdeio no me interesa lo de los registros no volátiles
+; Como no voy a llamar ninguna función en el medio no me interesa lo de los registros no volátiles
 
 cuantosTemplosClasicos:
 	; prólogo 
 	push rbp
 	mov rbp, rsp
+	push r11
 	push r12
 	push r13
 	push r14
 	push r15
 
 	; cuerpo
-	mov r15, rdi
-	mov r14, rsi
-	 
-	xor rax, rax ; limpio rax
-	mov rcx, rsi
-	.bucle:
-		mov r12, [r15 + OFFSET_COLUM_LARGO] ; r12 = colum_largo
-		mov r13, [r15 + OFFSET_COLUM_CORTO] ; r13 = colum_corto = N
-		shl r13, 1                          ; r13 = 2*colum_corto = 2*N
-		inc r13                             ; r13 = 2*colum_corto + 1 = 2*N + 1		
-		cmp r12, r13                        ; chequeo si cumple que M = 2*N + 1
-		jne .avanzar_templo			        ; ERROR EN ESTA LÍNEA ¿¿POR QUÉ??
-		;mov r12, [r15 + OFFSET_COLUM_LARGO] ; r12 = colum_largo = M
-		;mov r13, [r15 + OFFSET_COLUM_CORTO] ; r13 = colum_corto = N
-		;dec r12                             ; r12 = colum_largo - 1 = M - 1		
-		;shr r12, 1                          ; r12 = (colum_largo - 1)/2 = (M - 1)/2
-		;cmp r12, r13
-		;jne .avanzar_templo
-		inc rax
+	xor r12, r12 ; r12 = 0 ; r12 es el contador de templos clásicos
+	xor rcx , rcx ; rcx = 0 ; rcx es el contador de iteraciones
+	mov r13, rdi ; r13 = temploArr
+	mov r14, rsi ; r14 = temploArr_len
+	.loop:
+		cmp rcx , r14 ; si rcx >= r14, termino
+		jge .fin
 
-		.avanzar_templo:
-			add r15, 24 ; avanzo al siguiente templo de la lista
-		loop .bucle
+		movzx rax, byte [r13 + OFFSET_COLUM_LARGO] ; rax = temploArr[rcx].colum_largo (M)
+		movzx rbx, byte [r13 + OFFSET_COLUM_CORTO] ; rbx = temploArr[rcx].colum_corto (N)
+		imul rbx, rbx, 2 ; rbx = 2N
+		; Si M = 2N + 1, entonces es un templo clásico
+		; if (rax == 2*rbx + 1) => r12++
+		lea r11, [rbx+1]
+		cmp rax, r11
+		jne .siguiente
 
+		inc rcx  
+		inc r12 ; r12++
+	.siguiente:
+		add r13, STRUCT_TEMPLO_SIZE
+		inc rcx
+		jmp .loop
+
+	.fin:
 	; epílogo
 	pop r15
 	pop r14
 	pop r13
 	pop r12
+	pop r11
 	pop rbp
-	ret 
+	ret  
 
 ; Signatura de la función:
 ; templo* templosClasicos(templo *temploArr, size_t temploArr_len);
@@ -93,53 +98,51 @@ templosClasicos:
 	mov r15, rdi ; r15 = temploArr
 	mov r14, rsi ; r14 = temploArr_len
 
-	; quiero llamar la función:
-	; uint32_t cuantosTemplosClasicos(templo *temploArr, size_t temploArr_len);
-	; que recibe los mismos parámetros que la original, por lo tanto ya se encuentran cargados en rdi y rsi
-
+	push rdi
+	push rsi
 	call cuantosTemplosClasicos
-	; ahora tengo en rax la cantidad de templos clásicos de la lista
-	; quiero llamar calloc(#templosClásicos, size_pointer_struct_templo = 8 bytes)
-	; cargo los parámetros
+	pop rsi
+	pop rdi
 	mov rdi, rax ; rdi = #templosClásicos
-	mov rsi, 24  ; rsi = 24
-	call calloc  ; LA PRIMERA VEZ QUE LLAMO A CALLOC EL PROGRAMA TERMINA ¿¿¿POR QUÉ???
-	; ahora tengo en rax el puntero al inicio del bloque de memoria reservada
-	; me guardo una copia en r10 para poder avanzar cuando tengo que ir guardando los templos
-	mov r10, rax
 
-	mov rcx, r14 ; rcx = temploArr_len
-	cmp rcx, 0
-	je .fin
-	.bucle:
-		mov r12, [r15 + OFFSET_COLUM_LARGO] ; r12 = colum_largo
-		mov r13, [r15 + OFFSET_COLUM_CORTO] ; r13 = colum_corto = N
-		shl r13, 1                          ; r13 = 2*colum_corto = 2*N
-		inc r13                             ; r13 = 2*colum_corto + 1 = 2*N + 1		
-		cmp r12, r13                        ; chequeo si cumple que M = 2*N + 1
-		jne .avanzar_templo                 ; ERROR EN ESTA LÍNEA ¿¿POR QUÉ?? 
 
-		mov r9, 3
-		.guardar_templo:
-			mov r8, [r15]
-			mov [r10], r8
-			add r10, 8
-			add r15, 8
-			dec r9
-			cmp r9, 0
-			jne .guardar_templo
-			dec rcx
-			cmp rcx, 0
-			je .fin
-			jmp .bucle
+	mov rsi, STRUCT_TEMPLO_SIZE ; rsi = 24
+	call calloc ; rax = calloc(#templosClásicos, 24 bytes)
+	; voy a saltearme el if templosClasicos == NULL, porque no lo pide el enunciado
+	; voy a usar r12 como contador de templos clásicos
+	xor r12, r12 ; r12 = 0
+	xor rcx, rcx ; rcx = 0
+	.loop:
+		cmp rcx, r14 ; si rcx >= r14, termino
+		jge .fin
 
-		.avanzar_templo:
-			add r15, 24 ; avanzo al siguiente templo de la lista
-			dec rcx
-			cmp rcx, 0
-			je .fin
-			jmp .bucle
-		loop .bucle
+		movzx rax, byte [r15 + OFFSET_COLUM_LARGO] ; rax = temploArr[rcx].colum_largo (M)
+		movzx rbx, byte [r15 + OFFSET_COLUM_CORTO] ; rbx = temploArr[rcx].colum_corto (N)
+		imul rbx, rbx, 2 ; rbx = 2N
+		; Si M = 2N + 1, entonces es un templo clásico
+		; if (rax == 2*rbx + 1) => r12++
+		lea r13, [rbx+1]
+		cmp rax, r13
+		jne .avanzar
+
+		; Hay que guardar el templo clasico en templosClasicos[r12]
+		; Copiar el templo clasico al nuevo arreglo
+		mov rdi, r13 ; destino : nuevo arreglo
+		mov rsi, r15 ; origen : temploArr
+		imul r12, STRUCT_TEMPLO_SIZE ; r12 = r12 * 24
+		imul rcx, STRUCT_TEMPLO_SIZE ; rcx = rcx * 24
+		add rdi, r12 ; destino
+		add rsi, rcx ; origen
+		mov rcx , STRUCT_TEMPLO_SIZE ; rcx = 24
+		rep movsb ; copio el templo
+		inc r12 ; r12++ ; incremento el contador de templos clásicos
+
+
+		.avanzar:
+			;templosClasicos[r12] = temploArr[rcx];
+			add r15, STRUCT_TEMPLO_SIZE ; avanzo en temploArr
+			inc rcx ; rcx++
+			jmp .loop
 
 	.fin:
 	; epílogo

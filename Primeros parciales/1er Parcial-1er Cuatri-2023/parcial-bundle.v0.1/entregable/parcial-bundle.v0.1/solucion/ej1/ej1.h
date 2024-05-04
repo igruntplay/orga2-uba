@@ -18,10 +18,10 @@
 #define USE_ASM_IMPL 1
 
 typedef struct {
-  uint8_t colum_largo;
-  char *nombre;
-  uint8_t colum_corto;
-} templo;
+  uint8_t colum_largo; // offset 0
+  char *nombre; // offset 8
+  uint8_t colum_corto; // offset 16
+} templo; // offset 24
 
 
 //*******************************
