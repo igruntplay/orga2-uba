@@ -19,9 +19,9 @@
 #define USE_ASM_IMPL 1
 
 typedef struct msg {
-	char * text;
-	size_t text_len;
-	int tag;
+	char * text; // offset empieza en 0 y va hasta 8 porque es un puntero
+	size_t text_len; // offset empieza en 8
+	int tag; // offset empieza en 16
 } msg_t;
 
 
