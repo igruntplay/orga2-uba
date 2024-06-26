@@ -16,7 +16,7 @@
 //*************************************
 
 #define MAX_TAGS 4
-#define USE_ASM_IMPL 1
+#define USE_ASM_IMPL 0
 
 typedef struct msg {
 	char * text; // offset empieza en 0 y va hasta 8 porque es un puntero

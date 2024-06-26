@@ -34,12 +34,19 @@ agrupar:
     push rbp
     mov rbp, rsp
     ; voy a pushear los parametros a la pila
-    push rdi
-    push rsi
+    ;push rdi
+    ;push rsi
+
+    push r14
+    push r15
+
+    mov r14, rdi
+    mov r15, rsi
+
     ; Preguntar como manejar esto
-    sub rsp, 16
-    mov [rbp-8], rdi
-    mov [rbp-16], rsi
+    ;sub rsp, 16
+    ;mov [rbp-8], rdi
+    ;mov [rbp-16], rsi
 
     ; reservo memoria para el arreglo de punteros
     ;     char** result = calloc(MAX_TAGS, 8);
@@ -58,8 +65,11 @@ agrupar:
     ; quiero inicializar el arreglo en cero
     xor rdx, rdx ; rdx = 0
     mov rbx, rax ; rbx = copyResult
-
     xor rcx, rcx
+    mov r8, rdi
+    add r8, OFFSET_TAG
+    mov r9, rdi
+    add r9, OFFSET_TEXT_LEN
     ;     for (size_t i = 0; i < msgArr_len; i++)
        ;     {
        ; tamañoAReservarPorTag[msgArr[i].tag] += msgArr[i].text_len + 1; // le sumo 1 porque el tamaño no cuenta el caracter nulo
@@ -68,10 +78,12 @@ agrupar:
             cmp rcx, rsi
             jge .endLoop1
             ; tamañoAReservarPorTag[msgArr[i].tag] += msgArr[i].text_len + 1; // le sumo 1 porque el tamaño no cuenta el caracter nulo
-            mov rax, [rdi + rcx*16 + OFFSET_TAG] ; rax = msgArr[i].tag
+            mov rax, [rdi + r8] ; rax = msgArr[i].tag
             ; a rax le paso rdi + i x 16 + OFFSET_TAG
-            mov rbx, [rdi + rcx*16 + OFFSET_TEXT_LEN + 1]
+            mov rbx, [rdi + r9 + 1]
             inc rcx
+            add r8, 24 ; voy al siguiente elemento, sumandole todo el tamaño de la estructura
+            add r9, 24 ; idem
             jmp .loop1
 
     .endLoop1:
