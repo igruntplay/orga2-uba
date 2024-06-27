@@ -21,6 +21,7 @@ miraQueCoincidencia:
     mov rax, rdx
 
     mul edx ; rax = eax * edx 
+    shr rax , 2 ; rax = n * n / 4 = loop
     mov r8, rax
 
     xor rax, rax ; rax = iterarod = 0
@@ -30,40 +31,58 @@ miraQueCoincidencia:
         movdqu xmm0, [rdi] ; xmm0 = src1 
         movdqu xmm2, [rsi] ; xmm1 = src2
 
-        movdqu xmm1 ,xmm0  ;'temp src1	
-        movdqu xmm3, xmm2   ;'temp src2
+        movdqu xmm1 ,xmm0  ;'temp src`       `        	
         ;crear caso convertirEscalas y caso 255
 
         ;crear caso convertirEscalas
         ;extender componenets a doubles para multiplicar con floats
-        pmovzxbd xmm1, xmm1
-        pmovzxbd xmm3, xmm3
-
+        ;osea, extender los primeros 4 bytes, shiftear a la derecha 4, y hacer lo mismo
+        pmovzxbd xmm3, xmm1
+        psrldq xmm1, 4
+        pmovzxbd xmm4, xmm1
+        psrldq xmm1, 4
+        pmovzxbd xmm5, xmm1
+        psrldq xmm1, 4
+        pmovzxbd xmm6, xmm1
         ;convertir a float
-        cvtdq2ps xmm1, xmm1
-        cvtdq2ps xmm3, xmm3
-
+        cvtps2dq xmm3, xmm3
+        cvtps2dq xmm4, xmm4
+        cvtps2dq xmm5, xmm5
+        cvtps2dq xmm6, xmm6
         ;cargar bacha de constantes flotantes
         movdqu xmm7, [bachaDeConstantesFlotanes]
         ; multiplicar
-        mulps xmm1, xmm7
         mulps xmm3, xmm7
+        mulps xmm4, xmm7
+        mulps xmm5, xmm7
+        mulps xmm6, xmm7
         ;suma horizontal de a floats
 
-        haddps xmm1, xmm1
-        haddps xmm1, xmm1
 
         haddps xmm3, xmm3
         haddps xmm3, xmm3
+        
+        haddps xmm4, xmm4
+        haddps xmm4, xmm4
+        
+        haddps xmm5, xmm5
+        haddps xmm5, xmm5
+        
+        haddps xmm6, xmm6
+        haddps xmm6, xmm6
         ;reconvertir float a int
 
-        cvttps2dq xmm1, xmm1
         cvttps2dq xmm3, xmm3
+        cvttps2dq xmm4, xmm4
+        cvttps2dq xmm5, xmm5
+        cvttps2dq xmm6, xmm6
         ;pasar de double a byte mediante sacando el byte menos signficativo del double
         movdqu xmm7, [bytesMenosSignificativosDePixeles]
 
-        pshufb xmm1, xmm7
         pshufb xmm3, xmm7
+
+        pshufb xmm4, xmm7
+
         ;caso convertiGrises hecho
 
         ;caso 255
