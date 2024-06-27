@@ -15,7 +15,6 @@ section .data
 section .bss
 tamañoAReservarPorTag resq MAX_TAGS ; Reservar espacio para el arreglo
 
-
 ;########### SECCION DE TEXTO (PROGRAMA)
 section .text
 
@@ -58,18 +57,21 @@ agrupar:
 ;    char** copyResult = result;
     mov rax, tamañoAReservarPorTag
 
-    mov rdi, [rbp-8] ; msgArr
-    mov rsi, [rbp-16] ; msgArr_len
+  ;  mov rdi, [rbp-8] ; msgArr
+   ; mov rsi, [rbp-16] ; msgArr_len
     ; ^^ Preguntar si se puede hacer esto
 
     ; quiero inicializar el arreglo en cero
     xor rdx, rdx ; rdx = 0
     mov rbx, rax ; rbx = copyResult
     xor rcx, rcx
+
     mov r8, rdi
     add r8, OFFSET_TAG
+    
     mov r9, rdi
     add r9, OFFSET_TEXT_LEN
+    
     ;     for (size_t i = 0; i < msgArr_len; i++)
        ;     {
        ; tamañoAReservarPorTag[msgArr[i].tag] += msgArr[i].text_len + 1; // le sumo 1 porque el tamaño no cuenta el caracter nulo
@@ -79,8 +81,7 @@ agrupar:
             jge .endLoop1
             ; tamañoAReservarPorTag[msgArr[i].tag] += msgArr[i].text_len + 1; // le sumo 1 porque el tamaño no cuenta el caracter nulo
             mov rax, [rdi + r8] ; rax = msgArr[i].tag
-            ; a rax le paso rdi + i x 16 + OFFSET_TAG
-            mov rbx, [rdi + r9 + 1]
+            mov rbx, [rdi + r9 + 1] ; 
             inc rcx
             add r8, 24 ; voy al siguiente elemento, sumandole todo el tamaño de la estructura
             add r9, 24 ; idem

@@ -58,6 +58,7 @@ void test_ej1a(char* filename) {
     }
 }
 */
+
 void test_ej1b(char* filename){
     
     templo* (*func_templos)(templo* , size_t );

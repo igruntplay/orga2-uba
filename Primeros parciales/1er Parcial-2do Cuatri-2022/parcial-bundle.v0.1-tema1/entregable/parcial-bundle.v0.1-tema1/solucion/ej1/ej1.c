@@ -5,7 +5,7 @@
     Lo primero que tengo que hacer es reservar memoria para el arreglo a devolver, este arreglo tendrá MAX_TAGS número de elementos,
     y cada elemento va a tener un tamaño de 8 bytes, pues son punteros a punteros de char
     
-*/
+
 char** agrupar_c(msg_t* msgArr, size_t msgArr_len){
     char** result = calloc(MAX_TAGS, 8); // 8 bytes es el tamaño de un puntero a puntero de char
     size_t tamañoAReservarPorTag[MAX_TAGS] = {0}; // Inicializo en 0 todos los elementos del arreglo
@@ -34,3 +34,4 @@ char** agrupar_c(msg_t* msgArr, size_t msgArr_len){
 
     
 }
+*/

@@ -14,24 +14,62 @@ uint32_t cuantosTemplosClasicos_c(templo *temploArr, size_t temploArr_len){
     return count;
 }
   
-templo* templosClasicos_c(templo *temploArr, size_t temploArr_len){
-    //; La misma devuelve un puntero a un arreglo de templos que son del periodo clasico, es decir cumplen con la condición M = 2n+1 y la otra de n = (M-1)/2
-    templo *templosClasicos = malloc(temploArr_len * sizeof(templo));
-    if(templosClasicos == NULL){
+// Implementación de templosClasicos
+templo* templosClasicos(templo *temploArr, size_t temploArr_len) {
+    // Guardar los parámetros originales
+    templo *r15 = temploArr; // r15 = temploArr
+    size_t r14 = temploArr_len; // r14 = temploArr_len
+
+    // Llamar a la función para contar templos clásicos
+    uint32_t num_clasicos = cuantosTemplosClasicos(temploArr, temploArr_len);
+    
+    // Llamar a calloc para reservar memoria
+    templo *result = (templo*) calloc(num_clasicos, sizeof(templo));
+    
+    if (result == NULL) {
+        // Manejar el error de memoria
         return NULL;
     }
-    uint32_t count = 0;
-    for (size_t i = 0; i < temploArr_len; i++)
-    {
-        uint8_t M = temploArr[i].colum_largo;
-        uint8_t N = temploArr[i].colum_corto;
-        if(M == 2*N+1){
-            templosClasicos[count] = temploArr[i];
-            count++;
+
+    // Guardar una copia del puntero al inicio del bloque de memoria reservada
+    templo *r10 = result;
+
+    size_t rcx = r14; // rcx = temploArr_len
+
+    if (rcx == 0) {
+        return result; // Si la longitud es 0, regresar el resultado
+    }
+
+    // Bucle principal
+    while (rcx > 0) {
+        uint32_t r12 = temploArr->colum_largo; // r12 = colum_largo
+        uint32_t r13 = temploArr->colum_corto; // r13 = colum_corto = N
+        r13 = (r13 << 1) + 1; // r13 = 2*colum_corto + 1 = 2*N + 1
+
+        if (r12 != r13) { // Chequeo si cumple que M = 2*N + 1
+            temploArr++; // Avanzar al siguiente templo de la lista
+            rcx--;
+            continue;
+        }
+
+        // Guardar el templo
+        for (int r9 = 3; r9 > 0; r9--) {
+            *r10 = *temploArr;
+            r10++;
+            temploArr++;
+        }
+
+        rcx--;
+
+        if (rcx == 0) {
+            return result;
         }
     }
-    return templosClasicos;
+
+    return result;
 }
+
+
 
 
 
